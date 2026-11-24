@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PM Estudos • Cronograma & Corretor de Redação</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- Cabeçalho Principal -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-base shadow-sm">
+            PM
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight">Rumo à Farda</h1>
+            <p class="text-xs text-slate-500">Missão 24/11/2026 → 27/02/2027</p>
+          </div>
+        </div>
+        <button
+          onclick="openAppModal()"
+          class="sm:hidden px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5"
+        >
+          📲 App / Chave IA
+        </button>
+      </div>
+
+      <!-- Navegação por Abas -->
+      <div class="flex items-center gap-2">
+        <nav class="flex bg-slate-100 p-1 rounded-xl flex-1 sm:flex-none" aria-label="Navegação principal">
+          <button
+            id="tab-btn-cronograma"
+            onclick="switchTab('cronograma')"
+            class="flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all tab-active"
+          >
+            Missão do Dia
+          </button>
+          <button
+            id="tab-btn-simulado"
+            onclick="switchTab('simulado')"
+            class="flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all tab-inactive"
+          >
+            Simulado PM
+          </button>
+          <button
+            id="tab-btn-redacao"
+            onclick="switchTab('redacao')"
+            class="flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all tab-inactive"
+          >
+            Redação (Foto)
+          </button>
+        </nav>
+        <button
+          onclick="openAppModal()"
+          class="hidden sm:inline-flex px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold items-center gap-1.5 transition-colors"
+          title="Instalar no celular, configurar Chave IA ou Backup"
+        >
+          📲 App / IA
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6">
+
+    <!-- ==================== SEÇÃO 1: MISSÃO DO DIA & MATÉRIAS ==================== -->
+    <section id="section-cronograma" class="space-y-5">
+
+      <!-- Banner Severo de Cobrança por Atraso -->
+      <div id="inactivity-alert" class="hidden bg-rose-950 text-white border-2 border-rose-600 rounded-2xl p-4 sm:p-5 shadow-lg space-y-3">
+        <div class="flex items-start gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-rose-700 flex items-center justify-center text-2xl shrink-0">
+            🚨
+          </div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-sm sm:text-base font-black uppercase tracking-wide text-rose-200">
+                COBRANÇA DO INSTRUTOR • VOCÊ FALHOU!
+              </h3>
+              <span id="missed-days-badge" class="text-xs font-extrabold uppercase bg-rose-700 text-white px-2.5 py-0.5 rounded-md">
+                0 dias sem estudar
+              </span>
+            </div>
+            <p id="inactivity-message" class="text-sm text-rose-100 mt-1.5 leading-relaxed font-medium"></p>
+            <div class="mt-2.5 p-2.5 rounded-xl bg-rose-900/90 border border-rose-700/80">
+              <p id="inactivity-hard-quote" class="text-xs sm:text-sm font-black uppercase tracking-wide text-amber-300">
+                "SE NÃO SE ESFORÇAR, NÃO VAI PASSAR! A CONCORRÊNCIA ESTÁ ESTUDANDO ENQUANTO VOCÊ ARRUMA DESCULPAS."
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Painel de Contagem Regressiva, Patente e Controle de Data -->
+      <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Prova: 27/02/2027</span>
+              <span id="phase-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Fase 1: Base Teórica
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span id="countdown-days" class="text-3xl font-black text-emerald-400">96</span>
+              <span class="text-sm font-medium text-slate-300">dias restantes na missão</span>
+            </div>
+          </div>
+
+          <!-- Patente, XP e Ofensiva -->
+          <div class="flex items-center gap-3 bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-3 shrink-0">
+            <div class="flex items-center gap-2.5 pr-3 border-r border-slate-700">
+              <span id="rank-badge" class="text-2xl">🎖️</span>
+              <div>
+                <span id="rank-name" class="block text-sm font-extrabold text-white leading-tight">Recruta</span>
+                <span class="text-xs font-bold text-indigo-400"><span id="total-xp">0</span> XP</span>
+              </div>
+            </div>
+            <div class="text-center pr-3 border-r border-slate-700">
+              <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Ofensiva</span>
+              <span class="text-base font-extrabold text-amber-400">🔥 <span id="streak-count">0</span>d</span>
+            </div>
+            <div class="text-center">
+              <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Faltas</span>
+              <span class="text-base font-extrabold text-rose-400">⚠️ <span id="missed-count">0</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Data Atual e Notificações de Cobrança -->
+        <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400">Hoje no cronograma:</span>
+            <strong id="simulated-today-label" class="text-emerald-300 font-bold">24/11/2026</strong>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              id="btn-enable-notifications"
+              onclick="requestNotificationPermission()"
+              class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 font-bold transition-colors"
+            >
+              🔔 Ativar Cobrança
+            </button>
+            <button
+              onclick="advanceOneDay()"
+              class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold transition-colors"
+              title="Avança 1 dia para testar a cobrança de atraso e desbloquear o próximo dia"
+            >
+              +1 Dia (Simular)
+            </button>
+            <button
+              onclick="openCalendarModal()"
+              class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-colors"
+            >
+              📅 Histórico / Mapa
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CARD EXCLUSIVO DO DIA SELECIONADO ==================== -->
+      <div id="daily-mission-card" class="bg-white border-2 border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5 transition-all">
+        <!-- Cabeçalho de Navegação do Dia -->
+        <div class="flex items-center justify-between gap-2 pb-4 border-b border-slate-100">
+          <button
+            id="btn-prev-day"
+            onclick="changeViewingDay(-1)"
+            class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 text-xs sm:text-sm font-bold transition-colors"
+          >
+            ← Revisar Anterior
+          </button>
+
+          <div class="text-center">
+            <div class="flex items-center justify-center gap-2 flex-wrap">
+              <span id="day-number-badge" class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-slate-900 text-white">
+                Dia 1 de 96
+              </span>
+              <span id="day-status-pill" class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800">
+                HOJE
+              </span>
+            </div>
+            <h2 id="day-full-title" class="text-lg sm:text-xl font-black text-slate-900 mt-1">
+              24/11/2026 • Terça-feira
+            </h2>
+          </div>
+
+          <button
+            id="btn-next-day"
+            onclick="changeViewingDay(1)"
+            class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1"
+          >
+            <span>Próximo 🔒</span>
+          </button>
+        </div>
+
+        <!-- Faixa de Modo Revisão (quando visualizando dias anteriores) -->
+        <div id="past-review-banner" class="hidden p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <p class="text-xs font-extrabold uppercase tracking-wider text-indigo-900">📖 Modo Revisão de Dia Anterior</p>
+            <p class="text-xs text-indigo-800 mt-0.5">Revise as matérias estudadas nesta data ou gere um resumo rápido com IA.</p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              onclick="generateDayReviewAI()"
+              id="btn-ai-review"
+              class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors flex items-center gap-1.5"
+            >
+              <span>✨ Flash-Revisão IA</span>
+            </button>
+            <button
+              onclick="goToToday()"
+              class="px-3 py-2 rounded-lg bg-white border border-indigo-200 hover:bg-indigo-100 text-indigo-900 text-xs font-bold transition-colors"
+            >
+              Voltar p/ Hoje
+            </button>
+          </div>
+        </div>
+
+        <!-- Box de Flash-Revisão IA (aparece ao clicar no botão de revisão) -->
+        <div id="ai-review-box" class="hidden p-4 rounded-xl bg-slate-900 text-slate-100 space-y-2 border border-slate-700">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">⚡ Bizu Rápido de Revisão (IA)</span>
+            <button onclick="document.getElementById('ai-review-box').classList.add('hidden')" class="text-xs text-slate-400 hover:text-white">Fechar</button>
+          </div>
+          <div id="ai-review-content" class="text-xs sm:text-sm leading-relaxed text-slate-200 whitespace-pre-line"></div>
+        </div>
+
+        <!-- Aviso específico se este dia estiver ATRASADO -->
+        <div id="day-overdue-banner" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-semibold flex items-center justify-between gap-2">
+          <div>
+            <span>⚠️ <strong>DIA EM ATRASO (-15 XP):</strong> Você não concluiu nenhuma missão nesta data.</span>
+          </div>
+          <button
+            onclick="goToToday()"
+            class="px-3 py-1.5 rounded-lg bg-rose-700 text-white text-xs font-bold shrink-0 hover:bg-rose-800"
+          >
+            Ir para Hoje
+          </button>
+        </div>
+
+        <!-- Progresso das Tarefas do Dia -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>Progresso da Missão Diária</span>
+            <span id="day-task-counter">0 de 3 concluídas</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+            <div id="day-progress-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Lista de Tarefas do Dia -->
+        <div id="daily-tasks-list" class="space-y-2.5">
+          <!-- Tarefas renderizadas via JS -->
+        </div>
+
+        <!-- Botão Especial de Simulado (aparece nos domingos de simulado) -->
+        <div id="simulado-day-cta" class="hidden p-4 rounded-xl bg-purple-50 border-2 border-purple-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-purple-800">🎯 Dia de Simulado Oficial</span>
+            <p class="text-xs sm:text-sm text-purple-950 font-semibold mt-0.5">Faça o simulado inédito gerado pela IA e receba sua nota e diagnóstico.</p>
+          </div>
+          <button
+            onclick="switchTab('simulado')"
+            class="px-4 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs sm:text-sm font-bold shrink-0 transition-colors"
+          >
+            Iniciar Simulado PM →
+          </button>
+        </div>
+
+        <!-- Caderno de Anotações / Revisão do Dia -->
+        <div class="pt-3 border-t border-slate-100 space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="day-notes-input" class="text-xs font-bold uppercase tracking-wider text-slate-500">
+              📝 Anotações & Bizus deste dia (para revisar depois)
+            </label>
+            <span id="notes-saved-badge" class="text-[11px] font-semibold text-emerald-600 opacity-0 transition-opacity">✓ Salvo</span>
+          </div>
+          <textarea
+            id="day-notes-input"
+            rows="2"
+            oninput="saveDayNote()"
+            placeholder="Anote aqui fórmulas, artigos de lei ou erros que você precisa revisar depois..."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-xs sm:text-sm transition-all resize-y"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- ==================== PAINEL DE LIÇÕES CONCLUÍDAS POR MATÉRIA ==================== -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Lições Concluídas por Matéria</h3>
+            <p class="text-xs text-slate-500">Acompanhe seu avanço acumulado em cada disciplina do edital da PM.</p>
+          </div>
+          <span id="overall-lessons-badge" class="text-xs font-extrabold text-slate-700 bg-slate-100 px-3 py-1 rounded-lg self-start sm:self-center">
+            0 / 0 lições totais
+          </span>
+        </div>
+
+        <div id="subjects-progress-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <!-- Cards das matérias renderizados via JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== SEÇÃO 2: SIMULADO OFICIAL PM (IA) ==================== -->
+    <section id="section-simulado" class="hidden space-y-6">
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg font-extrabold text-slate-900">Simulado Oficial PM (Gerado por IA)</h2>
+              <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md bg-purple-100 text-purple-800">Banca PM / VUNESP</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+              Questões inéditas de Português, Matemática/RLM, Direito, Atualidades e Informática com correção, nota e dicas do Instrutor.
+            </p>
+          </div>
+        </div>
+
+        <!-- Configuração e Botão Gerar Simulado -->
+        <div id="simulado-setup-box" class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <label for="simulado-q-count" class="block text-xs font-bold uppercase tracking-wider text-slate-600">Quantidade de Questões</label>
+            <select id="simulado-q-count" class="px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800">
+              <option value="10">Simulado Rápido (10 questões • 2 por matéria)</option>
+              <option value="15">Simulado Padrão (15 questões • 3 por matéria)</option>
+            </select>
+          </div>
+
+          <button
+            id="btn-generate-simulado"
+            onclick="generateSimulado()"
+            class="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2"
+          >
+            <span id="btn-simulado-text">🎯 Gerar Novo Simulado PM</span>
+            <svg id="btn-simulado-spinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div id="simulado-error" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium"></div>
+
+        <!-- Área das Questões do Simulado -->
+        <div id="simulado-quiz-container" class="hidden space-y-6">
+          <div id="simulado-questions-list" class="space-y-5"></div>
+
+          <div class="pt-4 border-t border-slate-200 flex justify-end">
+            <button
+              id="btn-submit-simulado"
+              onclick="submitSimulado()"
+              class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-extrabold shadow-sm transition-all"
+            >
+              ✅ Finalizar Simulado e Receber Nota
+            </button>
+          </div>
+        </div>
+
+        <!-- Resultado e Dicas do Instrutor após Finalizar -->
+        <div id="simulado-result-box" class="hidden space-y-5 pt-4 border-t border-slate-200">
+          <div class="bg-slate-900 text-white rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Resultado Oficial do Simulado</span>
+              <h3 id="simulado-verdict-title" class="text-xl font-black text-white mt-0.5">Desempenho Avaliado</h3>
+              <p id="simulado-instructor-feedback" class="text-xs sm:text-sm text-amber-300 mt-1.5 font-medium leading-relaxed"></p>
+            </div>
+            <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-5 py-3 rounded-2xl shrink-0 self-start sm:self-center">
+              <span id="simulado-final-score" class="text-3xl font-black text-emerald-400">0</span>
+              <span class="text-sm text-slate-300 font-semibold">/ 100</span>
+            </div>
+          </div>
+
+          <!-- Dicas de Estudo Baseadas nos Erros -->
+          <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 space-y-2">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-900">💡 Dicas de Correção e Plano de Ataque</h4>
+            <ul id="simulado-tips-list" class="list-disc list-inside text-xs sm:text-sm text-slate-800 space-y-1.5"></ul>
+          </div>
+
+          <!-- Gabarito Comentado -->
+          <div class="space-y-3">
+            <h4 class="text-sm font-extrabold text-slate-900">📋 Gabarito Comentado Questão por Questão</h4>
+            <div id="simulado-review-list" class="space-y-3"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Histórico de Simulados -->
+      <div id="simulado-history-box" class="hidden bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+        <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-700">🏆 Histórico de Simulados Realizados</h3>
+        <div id="simulado-history-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SEÇÃO 3: CORRETOR DE REDAÇÃO COM IA ==================== -->
+    <section id="section-redacao" class="hidden space-y-6">
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900">Corretor de Redação (Padrão PM)</h2>
+            <p class="text-sm text-slate-500">Escolha um tema oficial abaixo, escreva à mão no caderno e envie a foto.</p>
+          </div>
+          <label class="inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl cursor-pointer transition-colors shrink-0">
+            Arquivo .txt
+            <input type="file" id="essay-file-input" accept=".txt" class="hidden" onchange="handleFileUpload(event)" />
+          </label>
+        </div>
+
+        <!-- Seletor de Temas Prontos da PM -->
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label for="essay-topic-select" class="block text-sm font-bold text-slate-700">Escolher Tema Estilo PM</label>
+            <button
+              type="button"
+              onclick="pickRandomTopic()"
+              class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-lg transition-colors"
+            >
+              🎲 Sortear Tema PM
+            </button>
+          </div>
+
+          <select
+            id="essay-topic-select"
+            onchange="selectPresetTopic(this.value)"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-medium text-slate-800 transition-all"
+          >
+            <option value="">-- Selecione um tema pronto da banca ou digite o seu abaixo --</option>
+          </select>
+
+          <input
+            type="text"
+            id="essay-topic"
+            placeholder="Ou digite/edite o tema da redação aqui..."
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm transition-all"
+          />
+        </div>
+
+        <!-- Envio de Foto do Caderno -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block text-sm font-bold text-slate-700">Foto da Redação no Caderno</label>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">Sem corretor automático</span>
+          </div>
+
+          <div id="photo-upload-controls" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="flex items-center justify-center gap-2.5 p-4 rounded-xl border-2 border-dashed border-slate-300 hover:border-slate-900 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all">
+              <span class="text-xl">📸</span>
+              <div class="text-left">
+                <span class="block text-sm font-bold text-slate-900">Tirar Foto Agora</span>
+                <span class="block text-xs text-slate-500">Abrir câmera do celular</span>
+              </div>
+              <input
+                type="file"
+                id="essay-camera-input"
+                accept="image/*"
+                capture="environment"
+                class="hidden"
+                onchange="handleImageUpload(event)"
+              />
+            </label>
+
+            <label class="flex items-center justify-center gap-2.5 p-4 rounded-xl border-2 border-dashed border-slate-300 hover:border-slate-900 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all">
+              <span class="text-xl">🖼️</span>
+              <div class="text-left">
+                <span class="block text-sm font-bold text-slate-900">Escolher da Galeria</span>
+                <span class="block text-xs text-slate-500">JPG, PNG ou WEBP</span>
+              </div>
+              <input
+                type="file"
+                id="essay-gallery-input"
+                accept="image/*"
+                class="hidden"
+                onchange="handleImageUpload(event)"
+              />
+            </label>
+          </div>
+
+          <!-- Pré-visualização da Foto Carregada -->
+          <div id="photo-preview-container" class="hidden relative rounded-2xl border border-slate-200 bg-slate-900 overflow-hidden">
+            <img id="photo-preview-img" src="" alt="Prévia da redação no caderno" class="w-full max-h-80 object-contain mx-auto" />
+            <div class="p-3 bg-slate-900/95 text-white flex items-center justify-between gap-2">
+              <div class="truncate">
+                <p id="photo-file-name" class="text-xs font-semibold truncate">redacao.jpg</p>
+                <p class="text-[11px] text-emerald-400">Pronta para leitura manuscrita</p>
+              </div>
+              <button
+                type="button"
+                onclick="clearUploadedImage()"
+                class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shrink-0 transition-colors"
+              >
+                Remover Foto
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Texto da Redação (Opcional) -->
+        <div class="space-y-1.5 pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-between">
+            <label for="essay-text" class="block text-xs font-bold uppercase tracking-wider text-slate-500">Ou cole/digite o texto (opcional)</label>
+            <span id="word-count" class="text-xs text-slate-400 font-medium">0 palavras</span>
+          </div>
+          <textarea
+            id="essay-text"
+            rows="4"
+            oninput="updateWordCount()"
+            placeholder="Caso não envie foto, cole seu texto aqui..."
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm leading-relaxed transition-all resize-y"
+          ></textarea>
+        </div>
+
+        <!-- Mensagem de Erro / Aviso -->
+        <div id="essay-error" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium"></div>
+
+        <!-- Botão Corrigir -->
+        <div class="flex justify-end">
+          <button
+            id="btn-correct-essay"
+            onclick="correctEssay()"
+            class="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
+          >
+            <span id="btn-correct-text">Corrigir Redação</span>
+            <svg id="btn-correct-spinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Resultado da Correção -->
+      <div id="essay-result" class="hidden bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Resultado da Avaliação</span>
+            <h3 class="text-xl font-bold text-slate-900 mt-0.5">Desempenho Geral</h3>
+            <p id="result-summary" class="text-sm text-slate-600 mt-1"></p>
+          </div>
+          <div class="flex items-center gap-2 bg-slate-900 text-white px-5 py-3 rounded-2xl shrink-0 self-start sm:self-center">
+            <span id="result-score" class="text-3xl font-extrabold">0</span>
+            <span class="text-sm text-slate-300 font-medium">/ 100</span>
+          </div>
+        </div>
+
+        <!-- Transcrição do Manuscrito -->
+        <div id="transcription-box" class="hidden p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-900">📝 Transcrição fiel lida da foto</span>
+            <span class="text-[11px] text-amber-700 font-medium">Mantendo grafia original</span>
+          </div>
+          <p id="result-transcription" class="text-xs sm:text-sm text-slate-800 whitespace-pre-line leading-relaxed font-mono bg-white/80 p-3 rounded-lg border border-amber-100"></p>
+        </div>
+
+        <!-- Notas por Critério -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-slate-500">Gramática / Ortografia</span>
+              <span id="score-gramatica" class="text-sm font-extrabold text-slate-900">0/30</span>
+            </div>
+            <p id="comment-gramatica" class="text-xs text-slate-600 leading-relaxed"></p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-slate-500">Estrutura / Coesão</span>
+              <span id="score-estrutura" class="text-sm font-extrabold text-slate-900">0/30</span>
+            </div>
+            <p id="comment-estrutura" class="text-xs text-slate-600 leading-relaxed"></p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-slate-500">Argumentação / Tema</span>
+              <span id="score-argumentacao" class="text-sm font-extrabold text-slate-900">0/40</span>
+            </div>
+            <p id="comment-argumentacao" class="text-xs text-slate-600 leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- Pontos Fortes e Onde Melhorar -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-100 space-y-2">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">✅ Pontos Fortes</h4>
+            <ul id="result-strengths" class="list-disc list-inside text-xs sm:text-sm text-slate-700 space-y-1.5"></ul>
+          </div>
+          <div class="p-4 rounded-xl bg-rose-50/60 border border-rose-100 space-y-2">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-rose-800">⚠️ Onde Melhorar (Erros & Ajustes)</h4>
+            <ul id="result-improvements" class="list-disc list-inside text-xs sm:text-sm text-slate-700 space-y-1.5"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Histórico de Redações Corrigidas -->
+      <div id="essay-history-box" class="hidden bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+        <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-700">📚 Histórico de Redações Avaliadas</h3>
+        <div id="essay-history-list" class="space-y-2"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== MODAL: HISTÓRICO / MAPA (FUTURO BLOQUEADO) ==================== -->
+  <div id="calendar-modal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-xl overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-extrabold text-slate-900">Histórico & Mapa da Missão</h3>
+          <p class="text-xs text-slate-500">Dias passados liberados para revisão • Dias futuros bloqueados (sem spoiler)</p>
+        </div>
+        <button onclick="closeCalendarModal()" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700">
+          Fechar
+        </button>
+      </div>
+      <div id="calendar-grid-container" class="p-5 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+        <!-- Dias renderizados via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: INSTALAR NO CELULAR, CHAVE IA E BACKUP ==================== -->
+  <div id="app-modal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-lg font-extrabold text-slate-900">Configurações & App no Celular</h3>
+        <button onclick="closeAppModal()" class="text-xs font-bold text-slate-500 hover:text-slate-900">Fechar</button>
+      </div>
+
+      <!-- Configuração da Chave API Gemini -->
+      <div class="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 space-y-2">
+        <label for="api-key-input" class="block text-xs font-extrabold uppercase tracking-wider text-indigo-900">
+          🔑 Chave API Gemini (Para IA funcionar no GitHub)
+        </label>
+        <p class="text-xs text-indigo-800 leading-relaxed">
+          Cole sua chave gratuita do Google AI Studio para ativar o Corretor por Foto, Simulado PM e Flash-Revisão:
+        </p>
+        <div class="flex gap-2">
+          <input
+            type="password"
+            id="api-key-input"
+            placeholder="AIzaSy..."
+            class="flex-1 px-3 py-2 rounded-lg border border-indigo-300 bg-white text-xs font-mono"
+          />
+          <button
+            onclick="saveApiKey()"
+            class="px-3.5 py-2 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold shrink-0"
+          >
+            Salvar
+          </button>
+        </div>
+        <p id="api-key-status" class="text-[11px] font-bold text-emerald-700 hidden">✓ Chave salva neste celular!</p>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-slate-700">
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+          <p class="font-extrabold text-slate-900">📱 Como fixar na tela inicial (Android / iPhone):</p>
+          <p class="text-xs"><strong>Android (Chrome):</strong> Toque nos <strong>3 pontinhos (⋮)</strong> → <strong>Adicionar à tela inicial</strong>.</p>
+          <p class="text-xs"><strong>iPhone (Safari):</strong> Toque em <strong>Compartilhar (⬆️)</strong> → <strong>Adicionar à Tela de Início</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Backup do Progresso -->
+      <div class="pt-2 border-t border-slate-100 space-y-2.5">
+        <p class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Backup do Progresso</p>
+        <div class="flex gap-2">
+          <button onclick="exportBackupCode()" class="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">
+            Copiar Código Backup
+          </button>
+          <button onclick="importBackupCode()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-bold hover:bg-slate-200">
+            Restaurar Código
+          </button>
+        </div>
+        <button onclick="resetAllProgress()" class="w-full py-2 text-xs font-semibold text-rose-600 hover:underline">
+          Zerar progresso e voltar para 24/11/2026
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de Feedback -->
+  <div id="xp-toast" class="fixed bottom-5 right-5 z-40 translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-sm font-semibold flex items-center gap-2 pointer-events-none">
+    <span id="toast-badge" class="text-emerald-400">+10 XP</span> <span id="toast-msg">Missão concluída!</span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
